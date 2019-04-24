@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // Generate a new random word
     private fun generateNewWord() {
-        this.currentWord = WordGenerator().newWord(10)
+        this.currentWord = WordGenerator().newWord(10).toLowerCase()
         resetUIForNewWord()
     }
 
@@ -237,7 +237,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // Reset UI when a new word is generated
     private fun resetUIForNewWord() {
-        textView.text = this.currentWord
+        textView.text = this.currentWord.toUpperCase()
         editText.text.clear()
     }
 
@@ -245,13 +245,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         override fun afterTextChanged(s: Editable) {
-            if(editText.text.equals("")) {
-                return
-            } else if(currentWord.equals(editText.text)) {
-                generateNewWord()
-                resetUIForNewWord()
-            } else if(!currentWord.contains(editText.text, true)) {
-                editText.text.clear()
+            if(!editText.text.equals("")) {
+                if (currentWord.equals(s.toString())) {
+                    generateNewWord()
+                    return
+                }
+                if (!currentWord.contains(s.toString(), true)) {
+                    editText.text.clear()
+                    return
+                }
             }
         }
     }

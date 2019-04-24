@@ -8,7 +8,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.harrywoodworth.alchem"
-        minSdkVersion 15
+        minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -35,6 +35,9 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-auth:16.2.1'
+
+    // Random words (invitrode)
+    implementation 'com.maximeroussy.invitrode:invitrode:2.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

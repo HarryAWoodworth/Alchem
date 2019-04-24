@@ -11,9 +11,18 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.maximeroussy.invitrode.WordGenerator
 import kotlinx.android.synthetic.main.activity_main.*
+import android.text.Editable
+import android.text.TextWatcher
+
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    // Start [TYPE GAME VARIABLES]
+    private var currentWord = "____DEFAULT_____"
+    // End [TYPE GAME VARIABLES]
 
     @VisibleForTesting
     val progressBar by lazy {
@@ -35,6 +44,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Get the shared instance of FirebaseAuth
         auth = FirebaseAuth.getInstance()
+
+        editText.addTextChangedListener(textWatcher)
     }
 
     public override fun onStart() {
@@ -43,6 +54,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
         updateUI(currentUser)
+
+        // Generate new word / set UI
+        generateNewWord()
     }
 
     // Create an account with email and password, log results
@@ -96,10 +110,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.LENGTH_SHORT).show()
                     updateUI(null)
                 }
-
-                if (!task.isSuccessful) {
-                    status.setText(R.string.auth_failed)
-                }
                 hideProgressBar()
             }
     }
@@ -112,8 +122,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // Send email verification and send a toast
     private fun sendEmailVerification() {
-
-
 
         // Disable button
         verifyEmailButton.isEnabled = false
@@ -166,19 +174,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateUI(user: FirebaseUser?) {
         hideProgressBar()
         if (user != null) {
-            status.text = getString(R.string.emailpassword_status_fmt,
-                user.email, user.isEmailVerified)
-            detail.text = getString(R.string.firebase_status_fmt, user.uid)
-
             emailPasswordButtons.visibility = View.GONE
             emailPasswordFields.visibility = View.GONE
             signedInButtons.visibility = View.VISIBLE
-
             verifyEmailButton.isEnabled = !user.isEmailVerified
         } else {
-            status.setText(R.string.signed_out)
-            detail.text = null
-
             emailPasswordButtons.visibility = View.VISIBLE
             emailPasswordFields.visibility = View.VISIBLE
             signedInButtons.visibility = View.GONE
@@ -223,6 +223,37 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     public override fun onStop() {
         super.onStop()
         hideProgressBar()
+    }
+
+    // Generate a new random word
+    private fun generateNewWord() {
+        this.currentWord = WordGenerator().newWord(10)
+        resetUIForNewWord()
+    }
+
+    fun generateNewWord(view: View) {
+        this.generateNewWord()
+    }
+
+    // Reset UI when a new word is generated
+    private fun resetUIForNewWord() {
+        textView.text = this.currentWord
+        editText.text.clear()
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+        override fun afterTextChanged(s: Editable) {
+            if(editText.text.equals("")) {
+                return
+            } else if(currentWord.equals(editText.text)) {
+                generateNewWord()
+                resetUIForNewWord()
+            } else if(!currentWord.contains(editText.text, true)) {
+                editText.text.clear()
+            }
+        }
     }
 
     // Logging tag const

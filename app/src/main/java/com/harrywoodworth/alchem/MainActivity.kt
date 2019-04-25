@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        getSupportActionBar()?.hide()
+
         // Buttons
         emailSignInButton.setOnClickListener(this)
         emailCreateAccountButton.setOnClickListener(this)
@@ -43,8 +45,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Get the shared instance of FirebaseAuth
         auth = FirebaseAuth.getInstance()
-
-        generateNewWord()
 
         editText.addTextChangedListener(textWatcher)
     }

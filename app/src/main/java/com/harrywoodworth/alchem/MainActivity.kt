@@ -17,7 +17,6 @@ import android.text.Editable
 import android.text.TextWatcher
 
 
-
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     // Start [TYPE GAME VARIABLES]
@@ -44,6 +43,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         // Get the shared instance of FirebaseAuth
         auth = FirebaseAuth.getInstance()
+
+        generateNewWord()
 
         editText.addTextChangedListener(textWatcher)
     }
